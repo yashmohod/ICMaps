@@ -14,15 +14,8 @@ public class Edge {
 
     @Id
     private String key;
-
-    // "One edge points to 2 nodes" === two @ManyToOne associations
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "from_node_id", nullable = false, foreignKey = @ForeignKey(name = "fk_edge_from_node"))
-    private Node fromNode;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "to_node_id", nullable = false, foreignKey = @ForeignKey(name = "fk_edge_to_node"))
-    private Node toNode;
+    private String fromNode;
+    private String toNode;
 
     // any metadata: distance in meters, cost, speed limit, etc.
     private double distanceMeters;
@@ -31,7 +24,7 @@ public class Edge {
 
     }
 
-    public Edge(double distanceMeters, Node toNode, Node fromNode, String key) {
+    public Edge(double distanceMeters, String toNode, String fromNode, String key) {
         this.distanceMeters = distanceMeters;
         this.toNode = toNode;
         this.fromNode = fromNode;
@@ -42,21 +35,7 @@ public class Edge {
         return key;
     }
 
-    public Node getFromNode() {
-        return fromNode;
-    }
 
-    public void setFromNode(Node fromNode) {
-        this.fromNode = fromNode;
-    }
-
-    public Node getToNode() {
-        return toNode;
-    }
-
-    public void setToNode(Node toNode) {
-        this.toNode = toNode;
-    }
 
     public double getDistanceMeters() {
         return distanceMeters;

@@ -1,4 +1,4 @@
-package com.ops.ICmaps;
+package com.ops.ICmaps.Navigation;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,13 +27,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @CrossOrigin
 @RequestMapping("/map")
-public class Map {
+public class MapRoute {
 
     private final NodeRepository nr;
     private final EdgeRepository er;
     private final ObjectMapper objectMapper;
 
-    public Map(EdgeRepository er, NodeRepository nr, ObjectMapper objectMapper) {
+    public MapRoute(EdgeRepository er, NodeRepository nr, ObjectMapper objectMapper) {
         this.nr = nr;
         this.er = er;
         this.objectMapper = objectMapper;

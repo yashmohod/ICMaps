@@ -3,6 +3,9 @@ package com.ops.ICmaps.Edge;
 import jakarta.persistence.*;
 
 import java.util.Objects;
+import java.util.Set;
+
+import com.ops.ICmaps.NavMode.NavMode;
 
 @Entity
 @Table(name = "edges")
@@ -15,6 +18,9 @@ public class Edge {
 
     // any metadata: distance in meters, cost, speed limit, etc.
     private double distanceMeters;
+
+    @ManyToMany(mappedBy = "edges")
+    Set<NavMode> navModes;
 
     protected Edge() {
 

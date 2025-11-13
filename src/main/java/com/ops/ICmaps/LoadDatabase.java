@@ -54,8 +54,11 @@ class LoadDatabase {
                 String[] navModes = { "Pedestrian", "ADA", "Vehicular" };
 
                 for (String mode : navModes) {
-                    NavMode curMode = new NavMode(null, mode);
-                    navr.save(curMode);
+                    if (!navr.existsNavModeByName(mode)) {
+                        NavMode curMode = new NavMode(null, mode);
+                        navr.save(curMode);
+                    }
+
                 }
 
                 JSONObject onj = (JSONObject) jp.parse(reader);
@@ -67,8 +70,9 @@ class LoadDatabase {
                     String type = (String) geometry.get("type");
                     JSONArray cords = (JSONArray) geometry.get("coordinates");
                     JSONObject prop = (JSONObject) feature.get("properties");
+                    // System.out.println(type);
 
-                    if ("Point".equals(type)) {
+                    if ("Point".equals(type) && !nr.existsById((String) prop.get("id"))) {
 
                         Node newNode = new Node(
                                 (String) prop.get("id"),
@@ -77,7 +81,7 @@ class LoadDatabase {
                         nr.save(newNode);
                     }
 
-                    if ("LineString".equals(type)) {
+                    if ("LineString".equals(type) && !er.existsById((String) prop.get("key"))) {
 
                         String key = (String) prop.get("key");
                         String fromId = (String) prop.get("from");

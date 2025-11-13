@@ -2,6 +2,7 @@ package com.ops.ICmaps.Edge;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,8 +20,17 @@ public class Edge {
     // any metadata: distance in meters, cost, speed limit, etc.
     private double distanceMeters;
 
-    @ManyToMany(mappedBy = "edges")
-    Set<NavMode> navModes;
+    @ManyToMany
+    @JoinTable(name = "edge_navmode", joinColumns = @JoinColumn(name = "edge_id"), inverseJoinColumns = @JoinColumn(name = "navmode_id"))
+    private Set<NavMode> navModes = new HashSet<>();
+
+    public boolean AddNavMode(NavMode curNavMode) {
+        return navModes.add(curNavMode);
+    }
+
+    public boolean RemoveNavMode(NavMode curNavMode) {
+        return navModes.remove(curNavMode);
+    }
 
     public Set<NavMode> getNavModes() {
         return navModes;

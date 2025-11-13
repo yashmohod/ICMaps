@@ -19,6 +19,8 @@ import com.ops.ICmaps.Buildings.Building;
 import com.ops.ICmaps.Buildings.BuildingRepository;
 import com.ops.ICmaps.Edge.Edge;
 import com.ops.ICmaps.Edge.EdgeRepository;
+import com.ops.ICmaps.Navigation.MapController.EdgeDTO;
+import com.ops.ICmaps.Navigation.MapController.NodeDTO;
 import com.ops.ICmaps.Node.Node;
 import com.ops.ICmaps.Node.NodeRepository;
 
@@ -82,11 +84,21 @@ public class NavModeController {
         return objectNode;
     }
 
+    public record NavmodeDTO(Long id, String name) {
+
+    }
+
     @GetMapping("/")
     public ObjectNode GetAllNavModes() {
         ObjectNode objectNode = objectMapper.createObjectNode();
         List<NavMode> allNavModes = navr.findAll();
-        objectNode.set("NavModes", objectMapper.valueToTree(allNavModes));
+
+        List<NavmodeDTO> NavmodeDTOs = allNavModes.stream()
+                .map(e -> new NavmodeDTO(
+                        e.getId(),
+                        e.getName()))
+                .toList();
+        objectNode.set("NavModes", objectMapper.valueToTree(NavmodeDTOs));
         return objectNode;
     }
 
@@ -105,7 +117,8 @@ public class NavModeController {
             if (value) {
                 if (!curNavMode.containsNode(curNode)) {
                     try {
-                        curNavMode.addNode(curNode);
+                        // curNavMode.addNode(curNode);
+                        curNode.AddNavMode(curNavMode);
                         nr.save(curNode);
                         navr.save(curNavMode);
                     } catch (Exception e) {
@@ -116,7 +129,8 @@ public class NavModeController {
             } else {
                 if (curNavMode.containsNode(curNode)) {
                     try {
-                        curNavMode.removeNode(curNode);
+                        // curNavMode.removeNode(curNode);
+                        curNode.RemoveNavMode(curNavMode);
                         nr.save(curNode);
                         navr.save(curNavMode);
 
@@ -131,7 +145,8 @@ public class NavModeController {
             if (value) {
                 if (!curNavMode.containsEdge(curEdge)) {
                     try {
-                        curNavMode.addEdge(curEdge);
+                        // curNavMode.addEdge(curEdge);
+                        curEdge.AddNavMode(curNavMode);
                         navr.save(curNavMode);
                         er.save(curEdge);
                     } catch (Exception e) {
@@ -141,7 +156,8 @@ public class NavModeController {
             } else {
                 if (curNavMode.containsEdge(curEdge)) {
                     try {
-                        curNavMode.removeEdge(curEdge);
+                        // curNavMode.removeEdge(curEdge);
+                        curEdge.RemoveNavMode(curNavMode);
                         navr.save(curNavMode);
                         er.save(curEdge);
                     } catch (Exception e) {
@@ -190,8 +206,21 @@ public class NavModeController {
         Set<Node> nodes = curNavMode.getNodes();
         Set<Edge> edges = curNavMode.getEdges();
 
-        objectNode.set("nodes", objectMapper.valueToTree(nodes));
-        objectNode.set("edges", objectMapper.valueToTree(edges));
+        List<NodeDTO> nodeDTOs = nodes.stream()
+                .map(e -> new NodeDTO(
+                        e.getId(),
+                        e.getLat(),
+                        e.getLng()))
+                .toList();
+        List<EdgeDTO> edgeDTOs = edges.stream()
+                .map(e -> new EdgeDTO(
+                        e.getKey(),
+                        e.getFromNode(),
+                        e.getToNode(),
+                        e.getDistance()))
+                .toList();
+        objectNode.set("nodes", objectMapper.valueToTree(nodeDTOs));
+        objectNode.set("edges", objectMapper.valueToTree(edgeDTOs));
         return objectNode;
     }
 

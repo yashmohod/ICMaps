@@ -68,12 +68,10 @@ public class NavMode {
                 return this.edges.contains(edge);
         }
 
-        @ManyToMany
-        @JoinTable(name = "node_navmode", joinColumns = @JoinColumn(name = "navmode_id"), inverseJoinColumns = @JoinColumn(name = "node_id"))
-        Set<Node> nodes;
+        @ManyToMany(mappedBy = "navModes")
+        private Set<Node> nodes = new HashSet<>();
 
-        @ManyToMany
-        @JoinTable(name = "edge_navmode", joinColumns = @JoinColumn(name = "navmode_id"), inverseJoinColumns = @JoinColumn(name = "edge_id"))
-        Set<Edge> edges;
+        @ManyToMany(mappedBy = "navModes")
+        private Set<Edge> edges = new HashSet<>();
 
 }

@@ -67,13 +67,22 @@ public class MapController {
 
     }
 
+    public record NodeDTO(String id, double lat, double lng) {
+
+    }
+
     @GetMapping("/all")
     public ObjectNode getAllNodes() {
 
         ObjectNode objectNode = objectMapper.createObjectNode();
         List<Node> nodes = nr.findAll();
         List<Edge> edges = er.findAll();
-
+        List<NodeDTO> nodeDTOs = nodes.stream()
+                .map(e -> new NodeDTO(
+                        e.getId(),
+                        e.getLat(),
+                        e.getLng()))
+                .toList();
         List<EdgeDTO> edgeDTOs = edges.stream()
                 .map(e -> new EdgeDTO(
                         e.getKey(),
@@ -82,7 +91,7 @@ public class MapController {
                         e.getDistance()))
                 .toList();
 
-        objectNode.set("nodes", objectMapper.valueToTree(nodes));
+        objectNode.set("nodes", objectMapper.valueToTree(nodeDTOs));
         objectNode.set("edges", objectMapper.valueToTree(edgeDTOs));
         return objectNode;
     }

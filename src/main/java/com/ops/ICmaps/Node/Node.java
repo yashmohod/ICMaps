@@ -8,7 +8,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "nodes", indexes = {
-    @Index(name = "idx_nodes_lat_lng", columnList = "lat,lng")
+        @Index(name = "idx_nodes_lat_lng", columnList = "lat,lng")
 })
 public class Node {
 
@@ -18,15 +18,20 @@ public class Node {
     private Double lng;
 
     @ManyToMany
-    @JoinTable(
-            name = "person_friends", // Name of the join table
-            joinColumns = @JoinColumn(name = "person_id"), // Foreign key for this entity
-            inverseJoinColumns = @JoinColumn(name = "friend_id") // Foreign key for the related entity (also Person)
-    )
-    private Set<Node> neighbours = new HashSet<>();
+    @JoinTable(name = "node_navmode", joinColumns = @JoinColumn(name = "node_id"), inverseJoinColumns = @JoinColumn(name = "navmode_id"))
+    private Set<NavMode> navModes = new HashSet<>();
 
-    @ManyToMany(mappedBy = "nodes")
-    Set<NavMode> navModes;
+    public boolean AddNavMode(NavMode curNavMode) {
+        return navModes.add(curNavMode);
+    }
+
+    public boolean RemoveNavMode(NavMode curNavMode) {
+        return navModes.remove(curNavMode);
+    }
+
+    public Set<NavMode> getNavModes() {
+        return navModes;
+    }
 
     @ManyToMany(mappedBy = "nodes")
     Set<NavMode> buildings;

@@ -2,6 +2,7 @@ package com.ops.ICmaps.Node;
 
 import com.ops.ICmaps.Edge.Edge;
 import com.ops.ICmaps.NavMode.NavMode;
+
 import jakarta.persistence.*;
 
 import java.util.*;
@@ -16,6 +17,7 @@ public class Node {
     private String id;
     private Double lat;
     private Double lng;
+    // private boolean ada;
 
     @ManyToMany
     @JoinTable(name = "node_navmode", joinColumns = @JoinColumn(name = "node_id"), inverseJoinColumns = @JoinColumn(name = "navmode_id"))
@@ -42,8 +44,10 @@ public class Node {
     public Node(String id, Double lng, Double lat) {
         this.lng = lng;
         this.lat = lat;
-        this.id = id;
+        this.id = id; 
     }
+
+
 
     public String getId() {
         return id;

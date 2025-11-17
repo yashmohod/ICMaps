@@ -57,7 +57,7 @@ public class GraphService {
     @EventListener(ApplicationReadyEvent.class)
     public void loadGraph() {
         rebuild();
-        rebuildNodes(nodes.findAll());
+     rebuildNodes(nodes.findAll());
     }
 
     private void rebuildNodes(List<Node> allNodes) {

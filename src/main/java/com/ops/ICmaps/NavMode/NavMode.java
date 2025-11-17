@@ -1,10 +1,18 @@
 package com.ops.ICmaps.NavMode;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.ops.ICmaps.Edge.Edge;
 import com.ops.ICmaps.Node.Node;
-import jakarta.persistence.*;
 
-import java.util.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "navmode")
@@ -13,6 +21,7 @@ public class NavMode {
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;
+        @Column(name="name", unique=true)
         private String name;
 
         protected NavMode() {

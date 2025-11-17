@@ -19,6 +19,7 @@ public class Edge {
 
     // any metadata: distance in meters, cost, speed limit, etc.
     private double distanceMeters;
+    // private boolean ada;
 
     @ManyToMany
     @JoinTable(name = "edge_navmode", joinColumns = @JoinColumn(name = "edge_id"), inverseJoinColumns = @JoinColumn(name = "navmode_id"))
@@ -45,7 +46,10 @@ public class Edge {
         this.toNode = toNode;
         this.fromNode = fromNode;
         this.key = key;
+
     }
+
+
 
     public String getKey() {
         return key;

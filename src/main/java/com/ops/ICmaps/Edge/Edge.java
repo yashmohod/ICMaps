@@ -19,7 +19,7 @@ public class Edge {
 
     // any metadata: distance in meters, cost, speed limit, etc.
     private double distanceMeters;
-    // private boolean ada;
+    private boolean biDirectional;
 
     @ManyToMany
     @JoinTable(name = "edge_navmode", joinColumns = @JoinColumn(name = "edge_id"), inverseJoinColumns = @JoinColumn(name = "navmode_id"))
@@ -41,15 +41,22 @@ public class Edge {
 
     }
 
-    public Edge(double distanceMeters, String toNode, String fromNode, String key) {
+    public Edge(double distanceMeters, String toNode, String fromNode, String key, Boolean biDirectional ) {
         this.distanceMeters = distanceMeters;
         this.toNode = toNode;
         this.fromNode = fromNode;
         this.key = key;
+        this.biDirectional = biDirectional;
 
     }
 
 
+    public Boolean isBiDirectional(){
+        return this.biDirectional;
+    }
+    public void setBiDirectional(boolean val ){
+        this.biDirectional = val;
+    }
 
     public String getKey() {
         return key;

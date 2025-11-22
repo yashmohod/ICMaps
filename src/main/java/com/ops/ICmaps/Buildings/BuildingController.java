@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,7 +55,7 @@ public class BuildingController {
 
         String respMessage = br.findById(newBuilding.getId()).map(curBuilding -> {
             curBuilding.setName(newBuilding.getName());
-
+            br.save(curBuilding);
             return "Building name update!";
         }).orElseGet(() -> {
             return "Building not found!";
@@ -63,12 +64,55 @@ public class BuildingController {
         return objectNode;
     }
 
+    @PatchMapping("/setpolygon")
+    @ResponseBody
+    public ObjectNode SetBuildingPolyGon(@RequestBody ObjectNode args) {
+        ObjectNode objectNode = objectMapper.createObjectNode();
+
+        String buildingId = args.get("buildingId").asText();
+        Double lat = args.get("lat").asDouble();
+        Double lng = args.get("lng").asDouble();
+        String polyGon = args.get("polygonJson").asText();
+
+        try{
+            Building curBuilding = br.findById(buildingId).get();
+            curBuilding.setLat(lat);
+            curBuilding.setLng(lng);
+            curBuilding.setPolyGon(polyGon);
+            br.save(curBuilding);
+            objectNode.put("message", "PolyGon Updated!");
+        }catch(Exception e){
+            objectNode.put("message", e.toString());
+        }
+
+        
+        return objectNode;
+    }
+
+    @DeleteMapping("/setpolygon")
+    @ResponseBody
+    public ObjectNode RemoveBuildingPolyGon(@RequestBody ObjectNode args) {
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        String buildingId = args.get("buildingId").asText();
+        try{
+            Building curBuilding = br.findById(buildingId).get();
+            curBuilding.setPolyGon("");
+            br.save(curBuilding);
+            objectNode.put("message", "PolyGon Updated!");
+        }catch(Exception e){
+            objectNode.put("message", e.toString());
+        }
+
+        
+        return objectNode;
+    }
+
     @DeleteMapping("/")
     @ResponseBody
     public ObjectNode DeleteBuilding(@RequestBody ObjectNode args) {
         ObjectNode objectNode = objectMapper.createObjectNode();
 
-        Long buildingId = args.get("id").asLong();
+        String buildingId = args.get("id").asText();
 
         try {
             br.deleteById(buildingId);
@@ -80,7 +124,7 @@ public class BuildingController {
         return objectNode;
     }
 
-    public record BuildingsDTO(Long id, String name) {
+    public record BuildingsDTO(String id, String name, double lat, double lng,String polyGon) {
 
     }
 
@@ -91,7 +135,10 @@ public class BuildingController {
         List<BuildingsDTO> NavmodeDTOs = allBuildings.stream()
                 .map(e -> new BuildingsDTO(
                         e.getId(),
-                        e.getName()))
+                        e.getName(),
+                        e.getLat(),
+                        e.getLng(),
+                    e.getPolyGon()))
                 .toList();
 
         objectNode.set("buildings", objectMapper.valueToTree(NavmodeDTOs));
@@ -99,7 +146,7 @@ public class BuildingController {
     }
 
     @GetMapping("/nodesget")
-    public ObjectNode GetAllBuildingNodes(@RequestParam Long id) {
+    public ObjectNode GetAllBuildingNodes(@RequestParam String id) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         Building building = br.findById(id).get();
         objectNode.set("nodes", objectMapper.valueToTree(building.getNodes()));
@@ -107,32 +154,32 @@ public class BuildingController {
     }
 
     @GetMapping("/buildingpos")
-    public ObjectNode GetBuildingPos(@RequestParam Long id) {
+    public ObjectNode GetBuildingPos(@RequestParam String id) {
         ObjectNode objectNode = objectMapper.createObjectNode();
         Building building = br.findById(id).get();
-        Set<Node> nodes = building.getNodes();
+        // Set<Node> nodes = building.getNodes();
 
-        double x = 0;
-        double y = 0;
-        double z = 0;
+        // double x = 0;
+        // double y = 0;
+        // double z = 0;
 
-        for (Node curNode : nodes) {
-            double lat_rad = Math.toRadians(curNode.getLat());
-            double lng_rad = Math.toRadians(curNode.getLng());
-            x += Math.cos(lat_rad) * Math.cos(lng_rad);
-            y += Math.cos(lat_rad) * Math.sin(lng_rad);
-            z += Math.sin(lat_rad);
-        }
+        // for (Node curNode : nodes) {
+        //     double lat_rad = Math.toRadians(curNode.getLat());
+        //     double lng_rad = Math.toRadians(curNode.getLng());
+        //     x += Math.cos(lat_rad) * Math.cos(lng_rad);
+        //     y += Math.cos(lat_rad) * Math.sin(lng_rad);
+        //     z += Math.sin(lat_rad);
+        // }
 
-        x /= nodes.size();
-        y /= nodes.size();
-        z /= nodes.size();
-        double hyp = Math.sqrt(x * x + y * y);
-        double lat = Math.toDegrees(Math.atan2(z, hyp));
-        double lng = Math.toDegrees(Math.atan2(y, x));
+        // x /= nodes.size();
+        // y /= nodes.size();
+        // z /= nodes.size();
+        // double hyp = Math.sqrt(x * x + y * y);
+        // double lat = Math.toDegrees(Math.atan2(z, hyp));
+        // double lng = Math.toDegrees(Math.atan2(y, x));
 
-        objectNode.put("lat", lat);
-        objectNode.put("lng", lng);
+        objectNode.put("lat", building.getLat());
+        objectNode.put("lng", building.getLng());
         return objectNode;
     }
 
@@ -140,7 +187,7 @@ public class BuildingController {
     public ObjectNode NodeAdd(@RequestBody ObjectNode args) {
 
         ObjectNode objectNode = objectMapper.createObjectNode();
-        Long buildingId = args.get("buildingId").asLong();
+        String buildingId = args.get("buildingId").asText();
         String nodeId = args.get("nodeId").asText();
 
         Building curBuilding = br.findById(buildingId).get();
@@ -156,7 +203,7 @@ public class BuildingController {
     public ObjectNode RemoveNode(@RequestBody ObjectNode args) {
 
         ObjectNode objectNode = objectMapper.createObjectNode();
-        Long buildingId = args.get("buildingId").asLong();
+        String buildingId = args.get("buildingId").asText();
         String nodeId = args.get("nodeId").asText();
 
         Building curBuilding = br.findById(buildingId).get();

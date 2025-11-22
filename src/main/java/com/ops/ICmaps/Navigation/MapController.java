@@ -86,7 +86,7 @@ public class MapController {
     }
 
     @GetMapping("/navigateTo")
-    public ObjectNode RouteTo(@RequestParam Long id,
+    public ObjectNode RouteTo(@RequestParam String id,
             @RequestParam Long navMode,
             @RequestParam Double lat,
             @RequestParam Double lng) {
@@ -99,7 +99,7 @@ public class MapController {
         return objectNode;
     }
 
-    public record EdgeDTO(String key, String from, String to, double distance) {
+    public record EdgeDTO(String key, String from, String to, double distance, boolean biDirectional) {
 
     }
 
@@ -124,7 +124,8 @@ public class MapController {
                         e.getKey(),
                         e.getFromNode(),
                         e.getToNode(),
-                        e.getDistance()))
+                        e.getDistance(),
+                        e.isBiDirectional()))
                 .toList();
 
         objectNode.set("nodes", objectMapper.valueToTree(nodeDTOs));
@@ -152,6 +153,7 @@ public class MapController {
             String key = args.get("key").asText();
             String from = args.get("from").asText();
             String to = args.get("to").asText();
+            boolean biDirectional = args.get("biDirectional").asBoolean();
 
             Double[] FromCords = nr.findById(from).map(foundNode -> {
                 Double[] Foundlatlng = { foundNode.getLat(), foundNode.getLng() };
@@ -179,7 +181,7 @@ public class MapController {
 
             double distance = calDistance(FromCords[0], FromCords[1], ToCords[0], ToCords[1]);
             System.out.println(distance);
-            er.save(new Edge(distance, to, from, key));
+            er.save(new Edge(distance, to, from, key, biDirectional));
             objectNode.put("message", "Edge added!");
 
         } else {

@@ -57,7 +57,7 @@ public class GraphService {
     @EventListener(ApplicationReadyEvent.class)
     public void loadGraph() {
         rebuild();
-     rebuildNodes(nodes.findAll());
+        rebuildNodes(nodes.findAll());
     }
 
     private void rebuildNodes(List<Node> allNodes) {
@@ -102,10 +102,16 @@ public class GraphService {
             Set<Long> navModesIds = e.getNavModes().stream()
                     .map(NavMode::getId)
                     .collect(Collectors.toUnmodifiableSet());
-            map.computeIfAbsent(e.getFromNode(), k -> new ArrayList<>())
-                    .add(new Adj(e.getToNode(), e.getDistance(), navModesIds));
-            map.computeIfAbsent(e.getToNode(), k -> new ArrayList<>())
-                    .add(new Adj(e.getFromNode(), e.getDistance(), navModesIds));
+            if (e.isBiDirectional()) {
+                map.computeIfAbsent(e.getFromNode(), k -> new ArrayList<>())
+                        .add(new Adj(e.getToNode(), e.getDistance(), navModesIds));
+                map.computeIfAbsent(e.getToNode(), k -> new ArrayList<>())
+                        .add(new Adj(e.getFromNode(), e.getDistance(), navModesIds));
+            } else {
+                map.computeIfAbsent(e.getFromNode(), k -> new ArrayList<>())
+                        .add(new Adj(e.getToNode(), e.getDistance(), navModesIds));
+            }
+
         }
 
         // freeze lists + map for thread safety, zero lock reads
@@ -118,7 +124,7 @@ public class GraphService {
         return adj.getOrDefault(fromId, List.of());
     }
 
-    public Set<String> navigate(double lat, double lng, Long DestinationId, Long navModeId) {
+    public Set<String> navigate(double lat, double lng, String DestinationId, Long navModeId) {
 
         String startId = nearestNodeId(lat, lng);
         NavMode pathNavMode = navr.findById(navModeId).get();

@@ -10,9 +10,11 @@ import java.util.Set;
 public class Building {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id;
     private String name;
+    private String polyGon;
+    private Double lat;
+    private Double lng;
 
     @ManyToMany
     @JoinTable(
@@ -24,21 +26,33 @@ public class Building {
     protected Building() {
     }
 
-    public Building(String name) {
-        this.name = name;
-    }
 
-    public Building(Long id, String name) {
+    public Building(String id, String name,Double lat, Double lng, String polyGon) {
         this.name = name;
         this.id = id;
+        this.lat =lat;
+        this.lng =lng;
+        this.polyGon=polyGon;
     }
 
-    public Long getId() {
+    public String getId() {
         return this.id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLng() {
+        return lng;
+    }
+
+    public void setLng(Double lng) {
+        this.lng = lng;
     }
 
     public String getName() {
@@ -47,6 +61,14 @@ public class Building {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPolyGon() {
+        return this.polyGon;
+    }
+
+    public void setPolyGon(String polyGon) {
+        this.polyGon = polyGon;
     }
 
     public Set<Node> getNodes() {

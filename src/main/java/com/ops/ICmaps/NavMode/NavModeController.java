@@ -217,7 +217,8 @@ public class NavModeController {
                         e.getKey(),
                         e.getFromNode(),
                         e.getToNode(),
-                        e.getDistance()))
+                        e.getDistance(),
+                        e.isBiDirectional()))
                 .toList();
         objectNode.set("nodes", objectMapper.valueToTree(nodeDTOs));
         objectNode.set("edges", objectMapper.valueToTree(edgeDTOs));

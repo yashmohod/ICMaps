@@ -64,14 +64,14 @@ class LoadDatabase {
                         navr.save(curMode);
                     }
                 }
-                String[] buildings = { "West Tower", "East Tower", "Holmes Hall" };
+                // String[] buildings = { "West Tower", "East Tower", "Holmes Hall" };
 
-                for (String building : buildings) {
-                    if (!br.existsBuildingByName(building)) {
-                        Building curBuilding = new Building(null, building);
-                        br.save(curBuilding);
-                    }
-                }
+                // for (String building : buildings) {
+                //     if (!br.existsBuildingByName(building)) {
+                //         Building curBuilding = new Building(null, building);
+                //         br.save(curBuilding);
+                //     }
+                // }
                 JSONObject onj = (JSONObject) jp.parse(reader);
                 JSONArray features = (JSONArray) onj.get("features");
 
@@ -112,7 +112,8 @@ class LoadDatabase {
                                 distance,
                                 fromId,
                                 toId,
-                                key);
+                                key,
+                                true);
                         er.save(newEdge);
                     }
                 }
